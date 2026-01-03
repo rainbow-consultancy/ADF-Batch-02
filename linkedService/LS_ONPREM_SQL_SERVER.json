@@ -1,0 +1,21 @@
+{
+	"name": "LS_ONPREM_SQL_SERVER",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"server": "SandeepReddy",
+			"database": "AdventureWorks2025",
+			"encrypt": "mandatory",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "sandeep2",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIxYTljZGU3Ny04MjA4LTRmYzAtODUzZC02MTQ1NTQxZWUwYWYiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "IR-Rainbow-Self-Hosted-SQL-Server",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
