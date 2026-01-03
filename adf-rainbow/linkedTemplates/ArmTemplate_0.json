@@ -6,6 +6,14 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "adf-rainbow"
+		},
+		"LS_ADLS_GEN2_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'LS_ADLS_GEN2'"
+		},
+		"LS_ADLS_GEN2_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://rainbowstorageadls.dfs.core.windows.net/"
 		}
 	},
 	"variables": {
@@ -13,16 +21,274 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/IR-Rainbow-Self-Hosted-SQL-Server')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"name": "[concat(parameters('factoryName'), '/LS_ADLS_GEN2')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"type": "SelfHosted",
+				"annotations": [],
+				"type": "AzureBlobFS",
 				"typeProperties": {
-					"selfContainedInteractiveAuthoringEnabled": true
+					"url": "[parameters('LS_ADLS_GEN2_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('LS_ADLS_GEN2_accountKey')]"
+					}
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_ADLS_SOURCE_CSV')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_ADLS_GEN2",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "ADLS_CONTAINER"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "employee_salary_dataset.csv",
+						"folderPath": "raw-datasets",
+						"fileSystem": "databricks-container"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_ADLS_GEN2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_ADLS_TARGET_CSV')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_ADLS_GEN2",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "ADLS_CONTAINER"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "copied_employee_dataset",
+						"folderPath": "archieve-datasets",
+						"fileSystem": "databricks-container"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_ADLS_GEN2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_COPY_CSV_FILE')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyCsvFile",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "EmployeeID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "EmplD",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Name",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Name",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Department",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Department",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Experience_Years",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Experience_Years",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Education_Level",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Education_Level",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Age",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Age",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Gender",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Gender",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "City",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "City",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Monthly_Salary",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Monthly_Salary",
+											"type": "String",
+											"physicalType": "String"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_ADLS_SOURCE_CSV",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_ADLS_TARGET_CSV",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "DATA_MIGRATION_TASKS"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_ADLS_SOURCE_CSV')]",
+				"[concat(variables('factoryId'), '/datasets/DS_ADLS_TARGET_CSV')]"
+			]
 		}
 	]
 }

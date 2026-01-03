@@ -4,6 +4,12 @@
 	"parameters": {
 		"factoryName": {
 			"value": "adf-rainbow"
+		},
+		"LS_ADLS_GEN2_accountKey": {
+			"value": ""
+		},
+		"LS_ADLS_GEN2_properties_typeProperties_url": {
+			"value": "https://rainbowstorageadls.dfs.core.windows.net/"
 		}
 	}
 }
