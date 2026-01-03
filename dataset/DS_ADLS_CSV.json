@@ -1,0 +1,27 @@
+{
+	"name": "DS_ADLS_CSV",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLS_GEN2",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ADLS_CONTAINER"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "employee_salary_dataset.csv",
+				"folderPath": "raw-datasets",
+				"fileSystem": "databricks-container"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
