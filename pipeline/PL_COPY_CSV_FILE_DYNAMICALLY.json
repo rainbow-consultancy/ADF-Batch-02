@@ -52,8 +52,14 @@
 						"referenceName": "DS_ADLS_CSV_FILE_DYNAMIC",
 						"type": "DatasetReference",
 						"parameters": {
-							"FolderName": "raw-datasets",
-							"FileName": "bihar_election_results.csv"
+							"FolderName": {
+								"value": "@pipeline().parameters.SourceFolder",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@pipeline().parameters.SourceFileName",
+								"type": "Expression"
+							}
 						}
 					}
 				],
@@ -62,13 +68,33 @@
 						"referenceName": "DS_ADLS_CSV_FILE_DYNAMIC",
 						"type": "DatasetReference",
 						"parameters": {
-							"FolderName": "archieve-datasets",
-							"FileName": "BiharElectionsData"
+							"FolderName": {
+								"value": "@pipeline().parameters.TargetFolder",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@pipeline().parameters.TargetFileName",
+								"type": "Expression"
+							}
 						}
 					}
 				]
 			}
 		],
+		"parameters": {
+			"SourceFolder": {
+				"type": "string"
+			},
+			"TargetFolder": {
+				"type": "string"
+			},
+			"SourceFileName": {
+				"type": "string"
+			},
+			"TargetFileName": {
+				"type": "string"
+			}
+		},
 		"folder": {
 			"name": "DATA_MIGRATION_TASKS"
 		},
