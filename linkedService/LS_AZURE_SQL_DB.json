@@ -1,0 +1,17 @@
+{
+	"name": "LS_AZURE_SQL_DB",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "rainbow-server.database.windows.net",
+			"database": "rainbow-db",
+			"encrypt": "mandatory",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "rainbow-user",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDU3MDFGRjFFLTVGM0UtNEZBRS04MDFFLTU0MjE5MjVGNTY0Nl8zZDQ2ZTFhOS1lOTA0LTQ0MmUtODA3OC0yODA2NTZjNjI2YmUiDQp9"
+		}
+	}
+}
