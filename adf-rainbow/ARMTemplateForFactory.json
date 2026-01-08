@@ -1143,7 +1143,7 @@
 								"value": "@activity('GetMetadataInfo').output.childItems",
 								"type": "Expression"
 							},
-							"batchCount": 10,
+							"isSequential": true,
 							"activities": [
 								{
 									"name": "SwitchCaseBasedOnFileType",
