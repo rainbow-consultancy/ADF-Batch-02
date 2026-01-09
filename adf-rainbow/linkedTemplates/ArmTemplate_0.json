@@ -653,14 +653,7 @@
 					{
 						"name": "CopyFile",
 						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Set variable1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
+						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -694,7 +687,7 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"FolderName": {
-										"value": "@pipeline().parameters.TriggerSourceFolder",
+										"value": "@split(pipeline().parameters.TriggerSourceFolder, '/')[1]",
 										"type": "Expression"
 									},
 									"FileName": {
@@ -717,23 +710,6 @@
 								}
 							}
 						]
-					},
-					{
-						"name": "Set variable1",
-						"type": "SetVariable",
-						"dependsOn": [],
-						"policy": {
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "FolderPath",
-							"value": {
-								"value": "@pipeline().parameters.TriggerSourceFolder",
-								"type": "Expression"
-							}
-						}
 					}
 				],
 				"policy": {
