@@ -31,6 +31,18 @@
 			"type": "string",
 			"defaultValue": "rainbow-user"
 		},
+		"EventTrigger_properties_PL_EVENT_TRIGGER_parameters_TriggerFileName": {
+			"type": "string",
+			"defaultValue": "@triggerBody().fileName"
+		},
+		"EventTrigger_properties_PL_EVENT_TRIGGER_parameters_TriggerSourceFolder": {
+			"type": "string",
+			"defaultValue": "@triggerBody().filePath"
+		},
+		"EventTrigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/55a823ff-3572-4afe-84f3-2631597109ef/resourceGroups/rg_rainbow/providers/Microsoft.Storage/storageAccounts/rainbowstorageadls"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -75,6 +87,15 @@
 					},
 					"LS_AZURE_SQL_DB_properties_typeProperties_userName": {
 						"value": "[parameters('LS_AZURE_SQL_DB_properties_typeProperties_userName')]"
+					},
+					"EventTrigger_properties_PL_EVENT_TRIGGER_parameters_TriggerFileName": {
+						"value": "[parameters('EventTrigger_properties_PL_EVENT_TRIGGER_parameters_TriggerFileName')]"
+					},
+					"EventTrigger_properties_PL_EVENT_TRIGGER_parameters_TriggerSourceFolder": {
+						"value": "[parameters('EventTrigger_properties_PL_EVENT_TRIGGER_parameters_TriggerSourceFolder')]"
+					},
+					"EventTrigger_properties_typeProperties_scope": {
+						"value": "[parameters('EventTrigger_properties_typeProperties_scope')]"
 					}
 				}
 			},

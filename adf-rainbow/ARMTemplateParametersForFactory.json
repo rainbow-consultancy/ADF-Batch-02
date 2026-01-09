@@ -22,6 +22,15 @@
 		},
 		"LS_AZURE_SQL_DB_properties_typeProperties_userName": {
 			"value": "rainbow-user"
+		},
+		"EventTrigger_properties_PL_EVENT_TRIGGER_parameters_TriggerFileName": {
+			"value": "@triggerBody().fileName"
+		},
+		"EventTrigger_properties_PL_EVENT_TRIGGER_parameters_TriggerSourceFolder": {
+			"value": "@triggerBody().filePath"
+		},
+		"EventTrigger_properties_typeProperties_scope": {
+			"value": "/subscriptions/55a823ff-3572-4afe-84f3-2631597109ef/resourceGroups/rg_rainbow/providers/Microsoft.Storage/storageAccounts/rainbowstorageadls"
 		}
 	}
 }
