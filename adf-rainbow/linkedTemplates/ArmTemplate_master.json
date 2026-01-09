@@ -37,7 +37,7 @@
 		},
 		"EventTrigger_properties_PL_EVENT_TRIGGER_parameters_TriggerSourceFolder": {
 			"type": "string",
-			"defaultValue": "@triggerBody().filePath"
+			"defaultValue": "@triggerBody().folderPath"
 		},
 		"EventTrigger_properties_typeProperties_scope": {
 			"type": "string",
