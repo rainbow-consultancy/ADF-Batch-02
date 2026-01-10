@@ -1,0 +1,33 @@
+{
+	"name": "DS_SOURCE_ONPREM_SQL_DATA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ONPREM_SQL_SERVER",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"SchemaName": {
+				"type": "string"
+			},
+			"TableName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "SqlDataMigrationDatasets"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().SchemaName",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().TableName",
+				"type": "Expression"
+			}
+		}
+	}
+}
