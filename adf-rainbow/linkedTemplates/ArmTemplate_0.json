@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'LS_AZURE_SQL_DB'"
 		},
+		"LS_ONPREM_SQL_SERVER_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_ONPREM_SQL_SERVER'"
+		},
 		"LS_ADLS_GEN2_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://rainbowstorageadls.dfs.core.windows.net/"
@@ -31,17 +35,17 @@
 			"type": "string",
 			"defaultValue": "rainbow-user"
 		},
-		"EventTrigger_properties_PL_EVENT_TRIGGER_parameters_TriggerFileName": {
+		"LS_ONPREM_SQL_SERVER_properties_typeProperties_server": {
 			"type": "string",
-			"defaultValue": "@triggerBody().fileName"
+			"defaultValue": "SandeepReddy"
 		},
-		"EventTrigger_properties_PL_EVENT_TRIGGER_parameters_TriggerSourceFolder": {
+		"LS_ONPREM_SQL_SERVER_properties_typeProperties_database": {
 			"type": "string",
-			"defaultValue": "@triggerBody().folderPath"
+			"defaultValue": "AdventureWorks2025"
 		},
-		"EventTrigger_properties_typeProperties_scope": {
+		"LS_ONPREM_SQL_SERVER_properties_typeProperties_userName": {
 			"type": "string",
-			"defaultValue": "/subscriptions/55a823ff-3572-4afe-84f3-2631597109ef/resourceGroups/rg_rainbow/providers/Microsoft.Storage/storageAccounts/rainbowstorageadls"
+			"defaultValue": "rainbow-user2"
 		}
 	},
 	"variables": {
@@ -84,6 +88,16 @@
 						"value": "[parameters('LS_AZURE_SQL_DB_password')]"
 					}
 				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/IR-RAINBOW-ONPREM')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
 			},
 			"dependsOn": []
 		},
@@ -343,6 +357,71 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DS_TARGET_ADLS_PARQUET')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_ADLS_GEN2",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"TargetFileName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "SqlDataMigrationDatasets"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().TargetFileName",
+							"type": "Expression"
+						},
+						"folderPath": "OnPremSqlTables",
+						"fileSystem": "databricks-container"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_ADLS_GEN2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_ONPREM_SQL_SERVER')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"server": "[parameters('LS_ONPREM_SQL_SERVER_properties_typeProperties_server')]",
+					"database": "[parameters('LS_ONPREM_SQL_SERVER_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('LS_ONPREM_SQL_SERVER_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('LS_ONPREM_SQL_SERVER_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "IR-RAINBOW-ONPREM",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/IR-RAINBOW-ONPREM')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/PL_COPY_CSV_FILE')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -524,7 +603,8 @@
 				"folder": {
 					"name": "DATA_MIGRATION_TASKS"
 				},
-				"annotations": []
+				"annotations": [],
+				"lastPublishTime": "2026-01-03T05:15:39Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_ADLS_SOURCE_CSV')]",
@@ -638,7 +718,8 @@
 				"folder": {
 					"name": "DATA_MIGRATION_TASKS"
 				},
-				"annotations": []
+				"annotations": [],
+				"lastPublishTime": "2026-01-05T04:53:24Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_ADLS_CSV_FILE_DYNAMIC')]"
@@ -728,7 +809,8 @@
 						"type": "String"
 					}
 				},
-				"annotations": []
+				"annotations": [],
+				"lastPublishTime": "2026-01-09T05:12:59Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_BINARY_COPY_FILES')]"
@@ -1029,7 +1111,8 @@
 						"type": "String"
 					}
 				},
-				"annotations": []
+				"annotations": [],
+				"lastPublishTime": "2026-01-08T07:17:41Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_BINARY_DATASET')]",
@@ -1200,7 +1283,8 @@
 				"folder": {
 					"name": "DATA_MIGRATION_TASKS"
 				},
-				"annotations": []
+				"annotations": [],
+				"lastPublishTime": "2026-01-05T05:19:14Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_BINARY_DATASET')]",
@@ -1351,7 +1435,8 @@
 				"policy": {
 					"elapsedTimeMetric": {}
 				},
-				"annotations": []
+				"annotations": [],
+				"lastPublishTime": "2026-01-08T06:51:18Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_BINARY_DATASET')]",
@@ -1488,7 +1573,8 @@
 				"policy": {
 					"elapsedTimeMetric": {}
 				},
-				"annotations": []
+				"annotations": [],
+				"lastPublishTime": "2026-01-07T08:16:42Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_SQL_TABLES')]",
@@ -1496,37 +1582,41 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/EventTrigger')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
+			"name": "[concat(parameters('factoryName'), '/DS_SOURCE_ONPREM_SQL_DATA')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "PL_EVENT_TRIGGER",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"TriggerFileName": "[parameters('EventTrigger_properties_PL_EVENT_TRIGGER_parameters_TriggerFileName')]",
-							"TriggerSourceFolder": "[parameters('EventTrigger_properties_PL_EVENT_TRIGGER_parameters_TriggerSourceFolder')]"
-						}
+				"linkedServiceName": {
+					"referenceName": "LS_ONPREM_SQL_SERVER",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"SchemaName": {
+						"type": "string"
+					},
+					"TableName": {
+						"type": "string"
 					}
-				],
-				"type": "BlobEventsTrigger",
+				},
+				"folder": {
+					"name": "SqlDataMigrationDatasets"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
 				"typeProperties": {
-					"blobPathBeginsWith": "/databricks-container/blobs/EventDemo/",
-					"blobPathEndsWith": ".csv",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('EventTrigger_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
+					"schema": {
+						"value": "@dataset().SchemaName",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().TableName",
+						"type": "Expression"
+					}
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/PL_EVENT_TRIGGER')]"
+				"[concat(variables('factoryId'), '/linkedServices/LS_ONPREM_SQL_SERVER')]"
 			]
 		}
 	]

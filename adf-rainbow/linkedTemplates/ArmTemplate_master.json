@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'LS_AZURE_SQL_DB'"
 		},
+		"LS_ONPREM_SQL_SERVER_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_ONPREM_SQL_SERVER'"
+		},
 		"LS_ADLS_GEN2_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://rainbowstorageadls.dfs.core.windows.net/"
@@ -30,6 +34,18 @@
 		"LS_AZURE_SQL_DB_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "rainbow-user"
+		},
+		"LS_ONPREM_SQL_SERVER_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "SandeepReddy"
+		},
+		"LS_ONPREM_SQL_SERVER_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "AdventureWorks2025"
+		},
+		"LS_ONPREM_SQL_SERVER_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rainbow-user2"
 		},
 		"EventTrigger_properties_PL_EVENT_TRIGGER_parameters_TriggerFileName": {
 			"type": "string",
@@ -76,6 +92,9 @@
 					"LS_AZURE_SQL_DB_password": {
 						"value": "[parameters('LS_AZURE_SQL_DB_password')]"
 					},
+					"LS_ONPREM_SQL_SERVER_password": {
+						"value": "[parameters('LS_ONPREM_SQL_SERVER_password')]"
+					},
 					"LS_ADLS_GEN2_properties_typeProperties_url": {
 						"value": "[parameters('LS_ADLS_GEN2_properties_typeProperties_url')]"
 					},
@@ -88,6 +107,33 @@
 					"LS_AZURE_SQL_DB_properties_typeProperties_userName": {
 						"value": "[parameters('LS_AZURE_SQL_DB_properties_typeProperties_userName')]"
 					},
+					"LS_ONPREM_SQL_SERVER_properties_typeProperties_server": {
+						"value": "[parameters('LS_ONPREM_SQL_SERVER_properties_typeProperties_server')]"
+					},
+					"LS_ONPREM_SQL_SERVER_properties_typeProperties_database": {
+						"value": "[parameters('LS_ONPREM_SQL_SERVER_properties_typeProperties_database')]"
+					},
+					"LS_ONPREM_SQL_SERVER_properties_typeProperties_userName": {
+						"value": "[parameters('LS_ONPREM_SQL_SERVER_properties_typeProperties_userName')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "adf-rainbow_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
 					"EventTrigger_properties_PL_EVENT_TRIGGER_parameters_TriggerFileName": {
 						"value": "[parameters('EventTrigger_properties_PL_EVENT_TRIGGER_parameters_TriggerFileName')]"
 					},
@@ -99,7 +145,9 @@
 					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adf-rainbow_ArmTemplate_0')]"
+			]
 		}
 	]
 }
