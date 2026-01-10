@@ -173,6 +173,8 @@
 		"folder": {
 			"name": "DATA_MIGRATION_TASKS"
 		},
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2026-01-03T05:15:39Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }

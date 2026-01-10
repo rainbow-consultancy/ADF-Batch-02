@@ -24,6 +24,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -155,6 +156,8 @@
 		"folder": {
 			"name": "DATA_MIGRATION_TASKS"
 		},
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2026-01-05T05:19:14Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }
