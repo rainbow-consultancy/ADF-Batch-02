@@ -1,0 +1,46 @@
+{
+	"name": "DF_PERSON_JOINED",
+	"properties": {
+		"activities": [
+			{
+				"name": "DataFlowJoined",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_JOIN",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SourcePerson": {
+								"SourceFileName": "person_20260110"
+							},
+							"SourcePersonPhone": {
+								"SourceFileName": "personphone_20260110"
+							},
+							"SinkJoinedPerson": {
+								"TargetFileName": "PersonJoined"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "None",
+					"cacheSinks": {
+						"firstRowOnly": true
+					}
+				}
+			}
+		],
+		"annotations": []
+	}
+}
