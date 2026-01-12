@@ -5,6 +5,11 @@
 			"referenceName": "LS_ADLS_GEN2",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"SourceFileName": {
+				"type": "string"
+			}
+		},
 		"folder": {
 			"name": "ADLS_CONTAINER"
 		},
@@ -13,7 +18,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "person_20260110",
+				"fileName": {
+					"value": "@dataset().SourceFileName",
+					"type": "Expression"
+				},
 				"folderPath": "OnpremSqlTables",
 				"fileSystem": "databricks-container"
 			},

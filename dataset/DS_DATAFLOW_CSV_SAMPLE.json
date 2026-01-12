@@ -5,6 +5,11 @@
 			"referenceName": "LS_ADLS_GEN2",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"TargetFileName": {
+				"type": "string"
+			}
+		},
 		"folder": {
 			"name": "ADLS_CONTAINER"
 		},
@@ -13,7 +18,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Person",
+				"fileName": {
+					"value": "@dataset().TargetFileName",
+					"type": "Expression"
+				},
 				"folderPath": "DataFlows",
 				"fileSystem": "databricks-container"
 			},
