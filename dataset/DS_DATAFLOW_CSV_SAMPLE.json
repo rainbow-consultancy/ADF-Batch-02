@@ -1,5 +1,5 @@
 {
-	"name": "DS_ADLS_SOURCE_CSV",
+	"name": "DS_DATAFLOW_CSV_SAMPLE",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LS_ADLS_GEN2",
@@ -13,8 +13,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "person_20260110",
-				"folderPath": "OnpremSqlTables",
+				"fileName": "Person",
+				"folderPath": "DataFlows",
 				"fileSystem": "databricks-container"
 			},
 			"columnDelimiter": ",",
@@ -23,6 +23,5 @@
 			"quoteChar": "\""
 		},
 		"schema": []
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+	}
 }

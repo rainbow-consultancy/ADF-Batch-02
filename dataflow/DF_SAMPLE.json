@@ -1,0 +1,63 @@
+{
+	"name": "DF_SAMPLE",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_ADLS_SOURCE_CSV",
+						"type": "DatasetReference"
+					},
+					"name": "Person"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DATAFLOW_CSV_SAMPLE",
+						"type": "DatasetReference"
+					},
+					"name": "OutputPerson"
+				}
+			],
+			"transformations": [
+				{
+					"name": "GroupByType"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          BusinessEntityID as short,",
+				"          PersonType as string,",
+				"          NameStyle as boolean,",
+				"          Title as string,",
+				"          FirstName as string,",
+				"          MiddleName as string,",
+				"          LastName as string,",
+				"          Suffix as string,",
+				"          EmailPromotion as short,",
+				"          AdditionalContactInfo as string,",
+				"          Demographics as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Person",
+				"Person aggregate(groupBy(PersonType),",
+				"     Count = count(\"BusinessEntityID\")) ~> GroupByType",
+				"GroupByType sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Person'],",
+				"     truncate: true,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> OutputPerson"
+			]
+		}
+	}
+}
