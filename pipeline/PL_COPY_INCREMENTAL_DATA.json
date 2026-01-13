@@ -1,0 +1,163 @@
+{
+	"name": "PL_COPY_INCREMENTAL_DATA",
+	"properties": {
+		"activities": [
+			{
+				"name": "LookUpMetadaInfo",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "select \nid,\nschema_name, \ntable_name, \nhigh_watermark_column, \nlast_updated_hwv\nfrom control_metadata_tbl;",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_SQL_TABLES",
+						"type": "DatasetReference",
+						"parameters": {
+							"SchemaName": ".",
+							"TableName": "."
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEachTable",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "LookUpMetadaInfo",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LookUpMetadaInfo').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "CopyIncData",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat(\n    'SELECT * FROM ',\n    item().schema_name,\n    '.',\n    item().table_name,\n    ' WHERE ',\n    item().high_watermark_column,\n    ' > ''',\n    item().last_updated_hwv,\n    ''''\n)\n",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_SQL_TABLES",
+									"type": "DatasetReference",
+									"parameters": {
+										"SchemaName": ".",
+										"TableName": "."
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_TARGET_ADLS_PARQUET",
+									"type": "DatasetReference",
+									"parameters": {
+										"TargetFileName": {
+											"value": "@toLower(item().table_name)",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "UpdateMetadataTable",
+							"type": "Script",
+							"dependsOn": [
+								{
+									"activity": "CopyIncData",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "LS_AZURE_SQL_DB",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"type": "Query",
+										"text": {
+											"value": "@concat(\n    'UPDATE control_metadata_tbl ',\n    'SET last_updated_hwv = (',\n        'SELECT MAX(',\n            item().high_watermark_column,\n        ') FROM ',\n            item().schema_name,\n        '.',\n            item().table_name,\n    ') ',\n    'WHERE table_name = ''',\n        item().table_name,\n    ''''\n)\n",
+											"type": "Expression"
+										}
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						}
+					]
+				}
+			}
+		],
+		"folder": {
+			"name": "INCREMENTAL_DATA"
+		},
+		"annotations": []
+	}
+}

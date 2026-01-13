@@ -22,7 +22,7 @@
 					"value": "@dataset().TargetFileName",
 					"type": "Expression"
 				},
-				"folderPath": "OnPremSqlTables",
+				"folderPath": "IncrementalDataLoads",
 				"fileSystem": "databricks-container"
 			},
 			"compressionCodec": "snappy"
