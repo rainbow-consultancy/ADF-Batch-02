@@ -143,7 +143,7 @@
 									{
 										"type": "Query",
 										"text": {
-											"value": "@concat(\n    'UPDATE control_metadata_tbl ',\n    'SET last_updated_hwv = (',\n        'SELECT MAX(',\n            item().high_watermark_column,\n        ') FROM ',\n            item().schema_name,\n        '.',\n            item().table_name,\n    ') ',\n    'WHERE table_name = ''',\n        item().table_name,\n    ''''\n)\n",
+											"value": "@concat(\n    'UPDATE control_metadata_tbl ',\n    'SET last_updated_hwv = (',\n        'SELECT MAX(CONVERT(DATE, ',\n            item().high_watermark_column,\n        ')) FROM ',\n            item().schema_name,\n        '.',\n            item().table_name,\n    ') ',\n    'WHERE table_name = ''',\n        item().table_name,\n    ''''\n)\n",
 											"type": "Expression"
 										}
 									}
